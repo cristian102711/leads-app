@@ -2,6 +2,13 @@
 
 Aplicación Shopify fullstack que captura leads desde la tienda online y los muestra en el panel de administración.
 
+> ⚠️ **Nota sobre el modo de ejecución:** Esta app corre en modo desarrollo
+> (`shopify app dev`), tal como indica el enunciado del desafío. El formulario
+> del storefront y el panel admin dependen del túnel que genera ese proceso
+> para funcionar (App Proxy). Si en algún momento pruebas el flujo y no
+> responde, probablemente el proceso no está corriendo de mi lado —
+> escríbeme y lo levanto en minutos, o coordinamos una demo en vivo.
+
 
 🚀 ¿Qué hace esta app?
 
@@ -108,7 +115,7 @@ Cliente en la tienda
  Botón "Marcar revisado" funcional
 
 
-
+urteey
 🚧 Lo que se haría con más tiempo
 
 
