@@ -1,0 +1,113 @@
+<div id="lead-form-block-{{ block.id }}" style="margin: 20px 0;">
+  <button id="btn-lead-{{ block.id }}" onclick="toggleForm('{{ block.id }}')" style="
+    background-color: #008060;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 4px;
+    width: 100%;
+  ">
+    Solicitar información
+  </button>
+
+  <div id="form-lead-{{ block.id }}" style="display:none; margin-top: 16px; padding: 20px; border: 1px solid #e0e0e0; border-radius: 4px;">
+    <h3 style="margin-top:0;">Solicitar información sobre este producto</h3>
+
+    <div id="msg-success-{{ block.id }}" style="display:none; color: #008060; padding: 12px; background: #e6f4f0; border-radius: 4px; margin-bottom: 12px;">
+      ✅ Tu solicitud fue enviada. Te contactaremos pronto.
+    </div>
+    <div id="msg-error-{{ block.id }}" style="display:none; color: #c00; padding: 12px; background: #fde8e8; border-radius: 4px; margin-bottom: 12px;">
+      ❌ Ocurrió un error. Por favor intenta de nuevo.
+    </div>
+
+    <div style="margin-bottom: 12px;">
+      <label style="display:block; margin-bottom:4px; font-weight:600;">Nombre *</label>
+      <input id="nombre-{{ block.id }}" type="text" placeholder="Tu nombre" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; box-sizing:border-box;" />
+    </div>
+
+    <div style="margin-bottom: 12px;">
+      <label style="display:block; margin-bottom:4px; font-weight:600;">Email *</label>
+      <input id="email-{{ block.id }}" type="email" placeholder="tu@email.com" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; box-sizing:border-box;" />
+    </div>
+
+    <div style="margin-bottom: 12px;">
+      <label style="display:block; margin-bottom:4px;">Mensaje (opcional)</label>
+      <textarea id="mensaje-{{ block.id }}" placeholder="¿En qué podemos ayudarte?" rows="3" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; box-sizing:border-box;"></textarea>
+    </div>
+
+    <button onclick="enviarLead('{{ block.id }}', '{{ product.title }}')" style="
+      background-color: #008060;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 15px;
+      cursor: pointer;
+      border-radius: 4px;
+    ">
+      Enviar solicitud
+    </button>
+  </div>
+</div>
+
+<script>
+function toggleForm(blockId) {
+  var form = document.getElementById('form-lead-' + blockId);
+  form.style.display = form.style.display === 'none' ? 'block' : 'none';
+}
+
+function enviarLead(blockId, producto) {
+  var nombre = document.getElementById('nombre-' + blockId).value.trim();
+  var email = document.getElementById('email-' + blockId).value.trim();
+  var mensaje = document.getElementById('mensaje-' + blockId).value.trim();
+
+  var msgSuccess = document.getElementById('msg-success-' + blockId);
+  var msgError = document.getElementById('msg-error-' + blockId);
+
+  msgSuccess.style.display = 'none';
+  msgError.style.display = 'none';
+
+  if (!nombre || !email) {
+    msgError.textContent = '❌ Nombre y email son obligatorios.';
+    msgError.style.display = 'block';
+    return;
+  }
+
+  var emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  if (!emailValido) {
+    msgError.textContent = '❌ El email no tiene un formato válido.';
+    msgError.style.display = 'block';
+    return;
+  }
+
+  fetch('/apps/leads-app/leads', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ nombre, email, mensaje, producto })
+  })
+  .then(function(res) {
+    if (res.ok) {
+      msgSuccess.style.display = 'block';
+      document.getElementById('nombre-' + blockId).value = '';
+      document.getElementById('email-' + blockId).value = '';
+      document.getElementById('mensaje-' + blockId).value = '';
+    } else {
+      msgError.textContent = '❌ Ocurrió un error. Por favor intenta de nuevo.';
+      msgError.style.display = 'block';
+    }
+  })
+  .catch(function() {
+    msgError.textContent = '❌ Error de conexión. Por favor intenta de nuevo.';
+    msgError.style.display = 'block';
+  });
+}
+</script>
+
+{% schema %}
+{
+  "name": "Formulario de leads",
+  "target": "section",
+  "settings": []
+}
+{% endschema %}
